@@ -1,29 +1,53 @@
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.Set;
+import javax.swing.JOptionPane;
+
 
 public class Best_Word {
-	ArrayList<String> wordList;
-	Scanner sc;
-	String onePt, twoPt, threePt, fourPt,
+	private ArrayList<String> wordList, candidates;
+	private String onePt, twoPt, threePt, fourPt,
 				fivePt, eightPt, tenPt;
-	HashMap letters, wordToCheck;
+	private Scanner sc;
+	private String input;
+	private HashMap<Character,Integer> letters;
+	private int score;
 	
 	public static void main(String[] args) throws Exception{
 		new Best_Word();
 	}
 	
 	Best_Word() throws Exception{
-		//Get legal words and store in wordList field.
-		URL legalWords = new URL("http://www.ign.com/code-foo/2016/words.txt");
+		score = 0;	
 		wordList = new ArrayList<String>();
-		sc = new Scanner(legalWords.openStream());	
+		//Get legal words and store in wordList field.
+		try{
+			URL legalWords = new URL("http://www.ign.com/code-foo/2016/words.txt");
+			wordList = new ArrayList<String>();
+			sc = new Scanner(legalWords.openStream());	
 
-		do{			
-			wordList.add(sc.nextLine());
-		}while(sc.hasNext());
+			do{			
+				wordList.add(sc.nextLine());
+			}while(sc.hasNext());
+		}
+		catch(Exception e){
+			//If Internet fails...
+			InputStream is = getClass().getResourceAsStream("words.txt");
+			InputStreamReader isr = new InputStreamReader(is, "UTF-8");
+			BufferedReader br = new BufferedReader(isr);
+			System.out.println("reading...");
+			String line = br.readLine();
+			do{						
+				wordList.add(line);
+				line = br.readLine();
+			}while(line != null);
+		}
+				
 		
 		onePt = "aeioulnstr";
 		twoPt = "dg";
@@ -32,11 +56,38 @@ public class Best_Word {
 		fivePt = "k";
 		eightPt = "jx";
 		tenPt = "qz";	
-		prompt();
-		System.out.println();
-		System.out.println("Highest scoring word possible: "
-							+ getBest());
-		
+		String input = null;
+		//Loop for user queries.
+		try{
+			do{
+				input = JOptionPane.showInputDialog(
+						"Enter string of letters: ");
+				letters = countCharFreq(input);		
+				String bestWord = getBest();
+				if(bestWord != null){
+					//Build string of candidate words to
+					//display to user.
+					String[] s = candidates.toArray(new String[candidates.size()]);
+					StringBuilder sb = new StringBuilder();
+					for(String str: s){
+						sb.append(str + "\n");
+					}
+					
+					//Show words possible, best word, and score
+					JOptionPane.showMessageDialog(null,
+							"Words Possible:\n" 
+							+sb.toString() 
+							+"Highest scoring word possible: "
+							+ bestWord + "\nScore: " + score);
+				}
+				
+				else
+					JOptionPane.showMessageDialog(null, "No words possible.");
+			}while(input != null);
+		}
+		catch(Exception e){
+			System.exit(0);
+		}
 	}
 	
 	
@@ -58,24 +109,14 @@ public class Best_Word {
 		}
 		return freqs;
 	}
-	
-	/**
-	 * This method will prompt user to enter
-	 * text string.
-	 */
-	private void prompt(){
-		System.out.print("Enter string of letters: ");
-		Scanner sc = new Scanner(System.in);
-		String input = sc.nextLine();
-		letters = countCharFreq(input);		
-	}
+		
 	
 	/**
 	 * This method will return the best word
-	 * given a list of valid words.
+	 * from a list of valid words.
 	 */
 	private String getBest(){
-		ArrayList<String> candidates = new ArrayList<String>();
+		candidates = new ArrayList<String>();
 		for(int i = 0; i < wordList.size(); i++){
 			String temp = wordList.get(i);						
 			if(check(temp)){
@@ -83,46 +124,52 @@ public class Best_Word {
 			}
 		}
 		String[] s = candidates.toArray(new String[candidates.size()]);
-		System.out.println(s.length);
-		for(String st: s)
-			System.out.println(st);
-//		for(int i = 0; i < temp.length; i++){
-//			System.out.println(temp[i]);
-//		}
 		return getHighestScoring(s);
 	}
 	
 	
+	/**
+	 * This method will search through an array
+	 * of valid words, scoring each, then returning
+	 * the highest scoring valid word in the array.
+	 * @param words	Array of valid words.
+	 * @return	Highest scoring word.
+	 */
 	private String getHighestScoring(String[] words) {
-//		for(int i = 0; i < words.length; i++){
-//			System.out.println(words[i]);
-//		}
-		int indexOfBestWord = 0;
+		int indexOfBestWord = 0;		
 		for(int i = 1; i < words.length; i++){
 			if(score(words[indexOfBestWord]) < score(words[i])){
-				indexOfBestWord = i;
+				indexOfBestWord = i;				
 			}
 		}
-		return words[indexOfBestWord];
+		if(indexOfBestWord < words.length){
+			score = score(words[indexOfBestWord]);
+			return words[indexOfBestWord];
+		}			
+		else
+			return null;
 	}
 	
 	/**
-	 * @param s
-	 * @return
+	 * This method takes a String representing
+	 * a valid Scrabble word and returns a score
+	 * based on the letter values defined above.
+	 * @param s	Valid word to be scored.
+	 * @return	Score of word.
 	 */
 	private int score(String s){
 		int score = 0;
 		for(int i = 0; i < s.length(); i++){
 			char temp = s.charAt(i);
-			if(onePt.indexOf(temp) > 0)
+			if(onePt.indexOf(temp) >= 0)
 				score += 1;
-			else if(twoPt.indexOf(temp) > 0)
+			else if(twoPt.indexOf(temp) >= 0)
 				score += 2;
-			else if(threePt.indexOf(temp) > 0)
+			else if(threePt.indexOf(temp) >= 0)
 				score += 3;
-			else if(fivePt.indexOf(temp) > 0)
+			else if(fivePt.indexOf(temp) >= 0)
 				score += 5;
-			else if(eightPt.indexOf(temp) > 0)
+			else if(eightPt.indexOf(temp) >= 0)
 				score += 8;
 			else
 				score += 10;
@@ -146,9 +193,6 @@ public class Best_Word {
 		HashMap<Character, Integer> word = countCharFreq(s);
 		Set<Character> keys = word.keySet();
 		Character[] charsToTest = keys.toArray(new Character[keys.size()]);	
-//		for(Character c: charsToTest)
-//			System.out.print(c);
-//		System.out.println();
 		
 		for(int i = 0; i < charsToTest.length; i++){
 			//Check if word contains char to test.
