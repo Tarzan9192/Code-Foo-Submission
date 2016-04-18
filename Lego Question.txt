@@ -1,0 +1,19 @@
+How Many 2x3 Lego Bricks to rebuild the Golden Gate Bridge:
+-----------------------------------------------------------
+
+1) According to 'http://goldengatebridge.org/research/factsGGBDesign.php',
+   the total weight of the bridge is 811,500,000 kg. Assuming they are correct,
+   then the mass can be found by M = W/a, where a is 9.8m/s^2 as usual.
+   So the mass of the bridge is 811,500,000kg*m/s^2(in Newtons) divided by 
+   9.81m/s^2. Which is 82,806,122.45kg.
+
+2) I'm going to be using the 2x3 lego brick. This page says it weighs 
+   1.92g = 0.00192kg. That means the mass of this brick is 0.00192N/9.81m/s^2 = 0.000196kg.
+   reference ===> (http://alpha.bricklink.com/pages/clone/catalogitem.page?P=3002&name=Brick%202%20x%203&category=[Brick]#T=C)
+
+3) Since we have the mass of the bridge (82,806,122.45kg) and the mass of the brick (0.000196kg)
+   I divide the mass of the brick into the mass of the bridge to get the number of bricks I would need 
+   to match the mass of the bridge. In other words, I have found how many bricks I would need to completely
+   rebuild the bridge, which is somewhere around 422,480,216,581.633 bricks!
+
+   WHEW!!!
