@@ -11,3 +11,6 @@ Anyway I hope you guys accept me for the program! I would love to work with you!
 
 Cheers,
 Josh
+
+P.S.-I put the link to my video in my email to you guys, 
+     here it is again just in case: https://www.youtube.com/watch?v=9pi4LUfEdcA
